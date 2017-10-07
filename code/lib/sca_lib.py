@@ -1,6 +1,6 @@
 import random
 
-import code.lib.ca_lib
+import lib.ca_lib as ca_lib
 
 
 def apply_rule(rule1, rule2, l, c, r, alpha):
@@ -8,8 +8,8 @@ def apply_rule(rule1, rule2, l, c, r, alpha):
         raise Exception('Wrong alpha: ' + str(alpha))
     random_number = random.random()
     if random_number < alpha:
-        return code.ca_lib.applyRule(rule1, l, c, r)
-    return code.ca_lib.applyRule(rule2, l, c, r)
+        return ca_lib.applyRule(rule1, l, c, r)
+    return ca_lib.applyRule(rule2, l, c, r)
 
 def apply_rule_to_vector(input_configuration, rule1, rule2, alpha):
     result = []
