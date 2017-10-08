@@ -1,6 +1,6 @@
 import binomial_distribution as bin
 import simulations as simulations
-import gaps as gaps
+import fill_gaps as gaps
 import lib.ca_data as ca_data
 
 def get_intervals_for_simulations(rule1, rule2, alpha):
@@ -8,10 +8,8 @@ def get_intervals_for_simulations(rule1, rule2, alpha):
     rules_matched = 'MATCH'
     success_rates = []
     for i in range(10):
-        total_num, all_simulations, all_simulations_with_gaps = simulations.perform_simulations(5, rule1, rule2, alpha, 10, 10, 0.05)
+        total_num, all_simulations, all_simulations_with_gaps = simulations.perform_simulations(5, rule1, rule2, alpha, 49, 49, 0.05)
         P = simulations.find_probabilities(total_num)
-        print("P")
-        print(P)
         filled_simulations = gaps.fill_gaps_for_all_simulations(all_simulations_with_gaps, P)
         total_number_of_gaps = get_total_number_of_gaps(all_simulations_with_gaps)
         total_number_of_failures = get_number_of_failures(all_simulations, filled_simulations)

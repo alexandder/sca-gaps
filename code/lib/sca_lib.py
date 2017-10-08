@@ -3,29 +3,29 @@ import random
 import lib.ca_lib as ca_lib
 
 
-def apply_rule(rule1, rule2, l, c, r, alpha):
+def apply_stochastic_rule(rule1, rule2, l, c, r, alpha):
     if alpha < 0 or alpha > 1:
         raise Exception('Wrong alpha: ' + str(alpha))
     random_number = random.random()
     if random_number < alpha:
-        return ca_lib.applyRule(rule1, l, c, r)
-    return ca_lib.applyRule(rule2, l, c, r)
+        return ca_lib.apply_rule(rule1, l, c, r)
+    return ca_lib.apply_rule(rule2, l, c, r)
 
-def apply_rule_to_vector(input_configuration, rule1, rule2, alpha):
+def apply_stochastic_rule_to_vector(input_configuration, rule1, rule2, alpha):
     result = []
     for i in range(len(input_configuration)):
         if i == len(input_configuration) - 1:
-            result.append(apply_rule(rule1, rule2, input_configuration[i - 1], input_configuration[i], input_configuration[0], alpha))
+            result.append(apply_stochastic_rule(rule1, rule2, input_configuration[i - 1], input_configuration[i], input_configuration[0], alpha))
         elif i == 0:
-            result.append(apply_rule(rule1, rule2, input_configuration[len(input_configuration) - 1], input_configuration[i], input_configuration[i + 1], alpha))
+            result.append(apply_stochastic_rule(rule1, rule2, input_configuration[len(input_configuration) - 1], input_configuration[i], input_configuration[i + 1], alpha))
         else:
-            result.append(apply_rule(rule1, rule2, input_configuration[i - 1], input_configuration[i], input_configuration[i + 1], alpha))
+            result.append(apply_stochastic_rule(rule1, rule2, input_configuration[i - 1], input_configuration[i], input_configuration[i + 1], alpha))
     return result
 
 def simulate(initial, T, rule1, rule2, alpha):
     res = [initial]
     for k in range(T):
-        res.append(apply_rule_to_vector(res[len(res) - 1], rule1, rule2, alpha))
+        res.append(apply_stochastic_rule_to_vector(res[len(res) - 1], rule1, rule2, alpha))
     return res
 
 

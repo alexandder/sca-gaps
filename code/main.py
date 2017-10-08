@@ -3,7 +3,7 @@ from calculate_results import find_wrong_estimation_ratio, get_intervals_for_sim
 
 def estimate_all_rules(alphas):
     print("alpha, r1, r2, max_err, wrong_ration, max_dist, match, filling success rate")
-    for r1 in range(256):
+    for r1 in [204]:
         for r2 in range(256):
             if r1 != r2:
                 for a in alphas:

@@ -4,7 +4,7 @@ import sys
 import lib.ca_data as ca_data
 
 
-def applyRule(number, l, c, r):
+def apply_rule(number, l, c, r):
     binary_rule_number = format(number, "#010b")[2:]
     neighborhood = int(str(l) + str(c) + str(r), 2)
     position = -neighborhood + 7
@@ -15,11 +15,11 @@ def applyRuleToVector(a, ruleNumber):
     result = []
     for i in range(len(a)):
         if i == len(a) - 1:
-            result.append(applyRule(ruleNumber, a[i - 1], a[i], a[0]))
+            result.append(apply_rule(ruleNumber, a[i - 1], a[i], a[0]))
         elif i == 0:
-            result.append(applyRule(ruleNumber, a[len(a) - 1], a[i], a[i + 1]))
+            result.append(apply_rule(ruleNumber, a[len(a) - 1], a[i], a[i + 1]))
         else:
-            result.append(applyRule(ruleNumber, a[i - 1], a[i], a[i + 1]))
+            result.append(apply_rule(ruleNumber, a[i - 1], a[i], a[i + 1]))
     return result
 
 
@@ -144,7 +144,7 @@ def create_random_initial_vector(n):
 
 
 def is_consistent_with_id(rule, neighborhood):
-    return str(applyRule(rule, int(neighborhood[0]), int(neighborhood[1]), int(neighborhood[2]))) == neighborhood[1]
+    return str(apply_rule(rule, int(neighborhood[0]), int(neighborhood[1]), int(neighborhood[2]))) == neighborhood[1]
 
 def get_neighborhoods_consistent_with_id(rule):
     result = []

@@ -1,50 +1,15 @@
 from copy import deepcopy
-import math
-import random
 
-import lib.ca_lib as ca_lib
+import initial_configurations
+import introduce_gaps as gaps
 import lib.ca_data as ca_data
 import lib.sca_lib as sca_lib
 
-def can_be_introduced(simulation, row, column):
-    row_length = len(simulation[0])
-    if column == 0:
-        return simulation[row - 1][row_length - 1] != -1 and simulation[row - 1][column] != -1 \
-               and simulation[row - 1][column + 1] != -1 and simulation[row][row_length - 2] != -1 \
-               and simulation[row][row_length - 1] != -1
-    elif column == 1:
-        return simulation[row - 1][0] != -1 and simulation[row - 1][column] != -1 \
-               and simulation[row - 1][column + 1] != -1 and simulation[row][row_length - 1] != -1 \
-               and simulation[row][0] != -1
-    elif column == row_length - 2:
-        return simulation[row - 1][row_length - 3] != -1 and simulation[row - 1][row_length - 2] != -1 \
-               and simulation[row - 1][row_length - 1] != -1 and simulation[row][column - 4] != -1 \
-               and simulation[row][column - 3] != -1
-    elif column == row_length - 1:
-        return simulation[row - 1][row_length - 2] != -1 and simulation[row - 1][row_length - 1] != -1 \
-               and simulation[row - 1][0] != -1 and simulation[row][column - 2] != -1 \
-               and simulation[row][column - 1] != -1
-    else:
-        return simulation[row - 1][column - 1] != -1 and simulation[row - 1][column] != -1 \
-               and simulation[row - 1][column + 1] != -1 and simulation[row][column - 2] != -1 \
-               and simulation[row][column - 1] != -1
 
-
-
-def introduce_gaps_for_simulation(simulation, probability):
-    for i in range(1, len(simulation) - 1):
-        for j in range(len(simulation[i])):
-            random_number = random.random()
-            if random_number < probability and can_be_introduced(simulation, i, j):
-                simulation[i][j] = -1
-    return simulation
-
-
-def perform_simulation_and_introduce_gaps_for_rules(rule1, rule2, alpha, N, T, gap_probability, all_simulations, all_simulations_with_gaps):
-    I = ca_lib.create_random_initial_vector(N)
+def perform_simulation_and_introduce_gaps_for_rules(I, rule1, rule2, alpha, N, T, gap_probability, all_simulations, all_simulations_with_gaps):
     simulation = sca_lib.simulate(I, T, rule1, rule2, alpha)
     all_simulations.append(deepcopy(simulation))
-    simulation = introduce_gaps_for_simulation(simulation, gap_probability)
+    simulation = gaps.introduce_gaps_for_simulation(simulation, gap_probability)
     all_simulations_with_gaps.append(deepcopy(simulation))
     return sca_lib.get_number_of_neighborhoods_with_gaps(simulation)
 
@@ -64,8 +29,8 @@ def perform_simulations(K, rule1, rule2, alpha, N, T, gap_probability):
                                      "000": {'0': 0, '1': 0}}
     all_simulations = []
     all_simulations_with_gaps = []
-    for k in range(K):
-        simulated_number_of_neighborhoods = perform_simulation_and_introduce_gaps_for_rules(rule1, rule2, alpha, N, T, gap_probability, all_simulations, all_simulations_with_gaps)
+    for I in initial_configurations.initial_configurations:
+        simulated_number_of_neighborhoods = perform_simulation_and_introduce_gaps_for_rules(I, rule1, rule2, alpha, N, T, gap_probability, all_simulations, all_simulations_with_gaps)
         merge_number_of_neighborhoods(total_number_of_neighborhoods, simulated_number_of_neighborhoods)
     return total_number_of_neighborhoods, all_simulations, all_simulations_with_gaps
 
