@@ -9,7 +9,7 @@ import lib.sca_lib as sca_lib
 def perform_simulation_and_introduce_gaps_for_rules(I, rule1, rule2, alpha, N, T, gap_probability, all_simulations, all_simulations_with_gaps):
     simulation = sca_lib.simulate(I, T, rule1, rule2, alpha)
     all_simulations.append(deepcopy(simulation))
-    simulation = gaps.introduce_gaps_for_simulation(simulation, gap_probability)
+    simulation = gaps.introduce_gaps_for_simulation(simulation, int(N*T*gap_probability))
     all_simulations_with_gaps.append(deepcopy(simulation))
     return sca_lib.get_number_of_neighborhoods_with_gaps(simulation)
 

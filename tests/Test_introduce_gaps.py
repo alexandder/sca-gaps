@@ -117,5 +117,5 @@ class Test_introduce_gaps(unittest.TestCase):
             [0, 0, 0, 1, 0]
         ]
 
-        introduce_gaps.introduce_gaps_for_simulation(simulation, 1)
+        introduce_gaps.introduce_gaps_for_simulation(simulation, 10)
         ca_lib.print_simulation_as_table(simulation)
