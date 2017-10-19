@@ -45,8 +45,7 @@ def roll(i, j, simulation):
 
 
 def introduce_gaps_for_simulation(simulation, count):
-    positions = [(i, j) for i in range(1, len(simulation) - 1)
-                 for j in range(len(simulation[i]))]
+    positions = [(i, j) for i in range(1, len(simulation) - 1) for j in range(len(simulation[i]))]
 
     while positions and count > 0:
         i, j = random.choice(positions)

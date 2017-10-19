@@ -1,4 +1,5 @@
 import random
+import sys
 from copy import deepcopy
 
 elementary_neighborhoods = ['000', '001', '010', '011', '100', '101', '110', '111']
@@ -193,15 +194,12 @@ def apply_stochastic_rule(rule1, rule2, l, c, r, alpha):
         return apply_rule(rule1, l, c, r)
     return apply_rule(rule2, l, c, r)
 
-def apply_stochastic_rule_to_vector(input_configuration, rule1, rule2, alpha):
+def apply_stochastic_rule_to_vector(vector, rule1, rule2, alpha):
     result = []
-    for i in range(len(input_configuration)):
-        if i == len(input_configuration) - 1:
-            result.append(apply_stochastic_rule(rule1, rule2, input_configuration[i - 1], input_configuration[i], input_configuration[0], alpha))
-        elif i == 0:
-            result.append(apply_stochastic_rule(rule1, rule2, input_configuration[len(input_configuration) - 1], input_configuration[i], input_configuration[i + 1], alpha))
-        else:
-            result.append(apply_stochastic_rule(rule1, rule2, input_configuration[i - 1], input_configuration[i], input_configuration[i + 1], alpha))
+    result.append(apply_stochastic_rule(rule1, rule2, vector[len(vector) - 1], vector[0], vector[1], alpha))
+    for i in range(1, len(vector) - 1):
+        result.append(apply_stochastic_rule(rule1, rule2, vector[i - 1], vector[i], vector[i + 1], alpha))
+    result.append(apply_stochastic_rule(rule1, rule2, vector[len(vector) - 2], vector[len(vector) - 1], vector[0], alpha))
     return result
 
 def simulate(initial, T, rule1, rule2, alpha):
@@ -210,24 +208,6 @@ def simulate(initial, T, rule1, rule2, alpha):
         res.append(apply_stochastic_rule_to_vector(res[len(res) - 1], rule1, rule2, alpha))
     return res
 
-
-def get_number_of_neighborhoods(simulation):
-    result = {"111": {'0': 0, '1': 0}, "110": {'0': 0, '1': 0}, "101": {'0': 0, '1': 0}, "100": {'0': 0, '1': 0},
-              "011": {'0': 0, '1': 0}, "001": {'0': 0, '1': 0}, "010": {'0': 0, '1': 0}, "000": {'0': 0, '1': 0}}
-    for t in range(len(simulation) - 1):
-        for i in range(len(simulation[t])):
-            vector = simulation[t]
-            rule_result = str(simulation[t+1][i])
-            if i == 0:
-                index = str(vector[len(vector) - 1]) + str(vector[i]) + str(vector[i + 1])
-                result[index][rule_result] = result[index][rule_result] + 1
-            elif i == len(vector) - 1:
-                index = str(vector[i - 1]) + str(vector[i]) + str(vector[0])
-                result[index][rule_result] = result[index][rule_result] + 1
-            else:
-                index = str(vector[i - 1]) + str(vector[i]) + str(vector[i + 1])
-                result[index][rule_result] = result[index][rule_result] + 1
-    return result
 
 def skip_neighborhood(i, vector):
     if i == 0 and (vector[len(vector) - 1] == -1 or vector[i] == -1 or vector[i+1] == -1):
@@ -243,66 +223,71 @@ def get_number_of_neighborhoods_with_gaps(simulation):
               "011": {'0': 0, '1': 0}, "001": {'0': 0, '1': 0}, "010": {'0': 0, '1': 0}, "000": {'0': 0, '1': 0}}
     for t in range(len(simulation) - 1):
         vector = simulation[t]
-        for i in range(len(simulation[t])):
-            rule_result = str(simulation[t+1][i])
-            if rule_result != str(-1):
-                if i == 0 and not skip_neighborhood(i, vector):
-                    index = str(vector[len(vector) - 1]) + str(vector[i]) + str(vector[i + 1])
-                    result[index][rule_result] = result[index][rule_result] + 1
-                elif i == len(vector) - 1 and not skip_neighborhood(i, vector):
-                    index = str(vector[i - 1]) + str(vector[i]) + str(vector[0])
-                    result[index][rule_result] = result[index][rule_result] + 1
-                elif not skip_neighborhood(i, vector):
-                    index = str(vector[i - 1]) + str(vector[i]) + str(vector[i + 1])
-                    result[index][rule_result] = result[index][rule_result] + 1
+
+        rule_result = simulation[t + 1][0]
+        if rule_result != -1 and not skip_neighborhood(0, vector):
+            nei = str(vector[len(vector) - 1]) + str(vector[0]) + str(vector[1])
+            result[nei][str(rule_result)] = result[nei][str(rule_result)] + 1
+
+        for i in range(1, len(simulation[t]) - 1):
+            rule_result = simulation[t+1][i]
+            if rule_result != -1 and not skip_neighborhood(i, vector):
+                nei = str(vector[i - 1]) + str(vector[i]) + str(vector[i + 1])
+                result[nei][str(rule_result)] = result[nei][str(rule_result)] + 1
+
+        rule_result = simulation[t + 1][len(vector) - 1]
+        if rule_result != -1 and not skip_neighborhood(len(vector) - 1, vector):
+            nei = str(vector[len(vector) - 2]) + str(vector[len(vector) - 1]) + str(vector[0])
+            result[nei][str(rule_result)] = result[nei][str(rule_result)] + 1
     return result
 
-def can_be_introduced(simulation, row, column):
-    row_length = len(simulation[0])
-    if column == 0:
-        return simulation[row - 1][row_length - 1] != -1 and simulation[row - 1][column] != -1 \
-               and simulation[row - 1][column + 1] != -1 and simulation[row][row_length - 2] != -1 \
-               and simulation[row][row_length - 1] != -1
-    elif column == 1:
-        return simulation[row - 1][0] != -1 and simulation[row - 1][column] != -1 \
-               and simulation[row - 1][column + 1] != -1 and simulation[row][row_length - 1] != -1 \
-               and simulation[row][0] != -1
-    elif column == row_length - 2:
-        return simulation[row - 1][row_length - 3] != -1 and simulation[row - 1][row_length - 2] != -1 \
-               and simulation[row - 1][row_length - 1] != -1 and simulation[row][column - 2] != -1 \
-               and simulation[row][column - 1] != -1 and simulation[row][0] != -1
-    elif column == row_length - 1:
-        return simulation[row - 1][row_length - 2] != -1 and simulation[row - 1][row_length - 1] != -1 \
-               and simulation[row - 1][0] != -1 and simulation[row][column - 2] != -1 \
-               and simulation[row][column - 1] != -1 and simulation[row][0] != -1 and simulation[row][1] != -1
-    else:
-        return simulation[row - 1][column - 1] != -1 and simulation[row - 1][column] != -1 \
-               and simulation[row - 1][column + 1] != -1 and simulation[row][column - 2] != -1 \
-               and simulation[row][column - 1] != -1
+def roll(i, j, simulation):
+    if (j < 0):
+        return j + len(simulation[i])
+
+    if (j >= len(simulation[i])):
+        return j - len(simulation[i])
+
+    return j
 
 
+def introduce_gaps_for_simulation(simulation, count):
+    positions = [(i, j) for i in range(1, len(simulation) - 1) for j in range(len(simulation[i]))]
 
-def introduce_gaps_for_simulation(simulation, probability):
-    for i in range(1, len(simulation) - 1):
-        for j in range(len(simulation[i])):
-            random_number = random.random()
-            if random_number < probability and can_be_introduced(simulation, i, j):
-                simulation[i][j] = -1
+    while positions and count > 0:
+        i, j = random.choice(positions)
+        simulation[i][j] = -1
+        for t in range(-1, 2):
+            for k in range(-1, 2):
+                try:
+                    positions.remove((i - k, roll(i - k, j + t, simulation)))
+                except:
+                    pass
+
+        for t in [-2, 2]:
+            try:
+                positions.remove((i, roll(i, j + t, simulation)))
+            except:
+                pass
+        count = count - 1
     return simulation
 
 
 def fill_gaps_for_all_simulations(all_simulations, P):
     filled_simulations = []
+    f_top = 0
+    tbot = 0
     for sim in all_simulations:
         copy = deepcopy(sim)
-        fill_gaps_from_top(copy, P)
-        fill_gaps_from_bottom(copy, P)
+        f_top += fill_gaps_from_top(copy, P)
+        tbot += fill_gaps_from_bottom(copy, P)
         filled_simulations.append(copy)
-    return filled_simulations
+    return filled_simulations, f_top, tbot
 
 
 def fill_gaps_from_top(simulation, P):
     row_length = len(simulation[0])
+    filled_top = 0
     for i in range(1, len(simulation)):
         for j in range(0, row_length):
             nei = ''
@@ -314,12 +299,16 @@ def fill_gaps_from_top(simulation, P):
                 nei = str(simulation[i - 1][j - 1]) + str(simulation[i - 1][j]) + str(simulation[i - 1][j + 1])
             if nei != '' and P[nei] == 0:
                 simulation[i][j] = 0
+                filled_top += 1
             elif nei != '' and P[nei] == 1:
                 simulation[i][j] = 1
+                filled_top += 1
+    return filled_top
 
 
 def fill_gaps_from_bottom(simulation, P):
     row_length = len(simulation[0])
+    tbot = 0
     for i in range(len(simulation) - 2, 0, -1):
         for j in range(0, row_length):
             nei = ''
@@ -363,13 +352,16 @@ def fill_gaps_from_bottom(simulation, P):
                 P0 = (1 - P[nei]) * A0
                 if P1 > P0:
                     simulation[i][j] = 1
+                    tbot += 1
                 else:
                     simulation[i][j] = 0
+                    tbot += 1
+    return tbot
 
 def perform_simulation_and_introduce_gaps_for_rules(I, rule1, rule2, alpha, N, T, gap_probability, all_simulations, all_simulations_with_gaps):
     simulation = simulate(I, T, rule1, rule2, alpha)
     all_simulations.append(deepcopy(simulation))
-    simulation = introduce_gaps_for_simulation(simulation, gap_probability)
+    simulation = introduce_gaps_for_simulation(simulation, int(gap_probability*N*T))
     all_simulations_with_gaps.append(deepcopy(simulation))
     return get_number_of_neighborhoods_with_gaps(simulation)
 
@@ -409,16 +401,22 @@ def get_intervals_for_simulations(rule1, rule2, alpha):
     result = []
     rules_matched = 'MATCH'
     success_rates = []
+    tftop = 0
+    ttbot = 0
+    tgaps = 0
     for i in range(10):
         total_num, all_simulations, all_simulations_with_gaps = perform_simulations(rule1, rule2, alpha, 49, 49, 0.05)
         P = find_probabilities(total_num)
-        filled_simulations = fill_gaps_for_all_simulations(all_simulations_with_gaps, P)
+        filled_simulations, ftop, tbot = fill_gaps_for_all_simulations(all_simulations_with_gaps, P)
+        tftop += ftop
+        ttbot += tbot
         total_number_of_gaps = get_total_number_of_gaps(all_simulations_with_gaps)
+        tgaps += total_number_of_gaps
         total_number_of_failures = get_number_of_failures(all_simulations, filled_simulations)
         if total_number_of_gaps == 0:
             success_rates.append(1.0)
         else:
-            success_rate = 1 - (total_number_of_failures/total_number_of_gaps*1.0)
+            success_rate = 1 - (1.0*total_number_of_failures/total_number_of_gaps)
             success_rates.append(success_rate)
         match = estimate_rules(P, rule1, rule2)
         alpha_L, alpha_U = calculate_confidence_interval(P, total_num)
@@ -426,7 +424,7 @@ def get_intervals_for_simulations(rule1, rule2, alpha):
         result.append(interval)
         if match == 'NO_MATCH':
             rules_matched = match
-    return result, rules_matched, success_rates
+    return result, rules_matched, success_rates, tgaps, tftop, ttbot, total_number_of_failures
 
 def calculate_confidence_interval(P, total_number_of_neighborhoods):
     nei_for_p_less_than_half = []
@@ -529,22 +527,21 @@ def estimate_rules(P, rule1, rule2):
 
 
 
-def estimate_all_rules(alphas):
-    print("alpha, r1, r2, max_err, wrong_ration, max_dist, match, filling success rate")
-    for r1 in [204]:
+def estimate_all_rules(rule, alphas):
+    print("alpha, r1, r2, max_err, wrong_ration, max_dist, match, filling success rate, total failures")
+    for r1 in [rule]:
         for r2 in range(256):
             if r1 != r2:
                 for a in alphas:
-                    intervals, match, success_rates = get_intervals_for_simulations(r1, r2, a)
+                    intervals, match, success_rates, tgaps, tftop, ttbot, tf = get_intervals_for_simulations(r1, r2, a)
                     print(a, r1, r2, find_max_error(intervals, a),
                           find_wrong_estimation_ratio(intervals, a),
                           find_max_distance(intervals, a),
-                          match, sum(success_rates) / len(success_rates))
+                          match, sum(success_rates) / len(success_rates), tf,
+                          tgaps, tftop, 1.0*tftop/tgaps, ttbot, 1.0*ttbot/tgaps)
 
 
-rule1 = 0
-rule2 = 16
-alpha = 0.25
+rule = sys.argv[1]
 alphas = [0.1, 0.2, 0.3, 0.4]
 
-estimate_all_rules(alphas)
+estimate_all_rules(int(rule), alphas)
