@@ -41,7 +41,6 @@ def read_success_rates_grouped_by_inconsistent_neighborhoods():
     result = {'1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': []}
     for i in range(1, 9):
         result[str(i)] = read_success_rates_for_number_of_inconsistnet_neighborhoods(i)
-    print(result['8'])
     return result
 
 def read_success_rates_for_rules():
@@ -53,6 +52,75 @@ def read_success_rates_for_rules():
                 data = line.split(" ")
                 r2 = int(data[2].replace(',', ''))
                 sr = float(data[7].replace(',', ''))
+                result.setdefault(r, []).append(sr)
+                result.setdefault(r2, []).append(sr)
+    return result
+
+def read_success_rates_for_alpha(alpha):
+    result = []
+    for r in range(256):
+        f = open('../../logs/' + str(r) + '.out', 'r')
+        for line in f:
+            if line[0] != 'a':
+                data = line.split(" ")
+                if data[0].replace('(', '').replace(',', '') == str(alpha):
+                    result.append(float(data[7].replace(',', '')))
+    return result
+
+def read_success_rates_for_alphas(alphas):
+    result = {}
+    for alpha in alphas:
+        result[str(alpha)] = read_success_rates_for_alpha(alpha)
+    return result
+
+def read_success_rates_for_nondeterministic_gaps():
+    result = []
+    for r in range(256):
+        f = open('../../logs/' + str(r) + '.out', 'r')
+        for line in f:
+            if line[0] != 'a':
+                data = line.split(" ")
+                total_success = float(data[7].replace(',', '')) * float(data[9].replace(',', ''))
+                total_nondeterministic_gaps = float(data[12].replace(',', ''))
+                total_deterministic_gaps = float(data[10].replace(',', ''))
+                result.append((total_success - total_deterministic_gaps)/total_nondeterministic_gaps)
+    return result
+
+def read_success_rates_for_nondeterministic_gaps_grouped_by_inconsistent_neighborhoods():
+    result = {'1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': []}
+    for i in range(1, 9):
+        result[str(i)] = read_success_rates_for_nondeterministic_gaps_and_number_of_inconsistnet_neighborhoods(i)
+    return result
+
+def read_success_rates_for_nondeterministic_gaps_and_number_of_inconsistnet_neighborhoods(number):
+    result = []
+    for r in range(256):
+        f = open('../../logs/' + str(r) + '.out', 'r')
+        for line in f:
+            if line[0] != 'a':
+                data = line.split(" ")
+                r1 = int(data[1].replace(',', ''))
+                r2 = int(data[2].replace(',', ''))
+                if number_of_inconsistent_neighborhoods(r1, r2) == number:
+                    total_success = float(data[7].replace(',', '')) * float(data[9].replace(',', ''))
+                    total_nondeterministic_gaps = float(data[12].replace(',', ''))
+                    total_deterministic_gaps = float(data[10].replace(',', ''))
+                    result.append((total_success - total_deterministic_gaps) / total_nondeterministic_gaps)
+    return result
+
+
+def read_success_rates_for_nondeterministic_gaps_and_rules():
+    result = {}
+    for r in range(256):
+        f = open('../../logs/' + str(r) + '.out', 'r')
+        for line in f:
+            if line[0] != 'a':
+                data = line.split(" ")
+                r2 = int(data[2].replace(',', ''))
+                total_success = float(data[7].replace(',', '')) * float(data[9].replace(',', ''))
+                total_nondeterministic_gaps = float(data[12].replace(',', ''))
+                total_deterministic_gaps = float(data[10].replace(',', ''))
+                sr = (total_success - total_deterministic_gaps) / total_nondeterministic_gaps
                 result.setdefault(r, []).append(sr)
                 result.setdefault(r2, []).append(sr)
     return result

@@ -16,7 +16,7 @@ def find_sds(data):
     return result
 
 
-def make_graph(averages, sds):
+def make_graph(averages, sds, path, name):
     avgs = {}
     ss = {}
     for r in range(256):
@@ -30,10 +30,13 @@ def make_graph(averages, sds):
     plt.title("Average and standard deviation of success rates in %")
     plt.xlabel('average')
     plt.ylabel('standard deviation')
-    plt.savefig('../../graphs/avg_sd.pdf')
+    plt.savefig(path + name)
 
-
-data = logs_reader.read_success_rates_for_rules()
+path = '../../graphs/'
+#name = 'avg_sd.pdf'
+name = 'nodeterministic_avg_sd.pdf'
+#data = logs_reader.read_success_rates_for_rules()
+data = logs_reader.read_success_rates_for_nondeterministic_gaps_and_rules()
 avgs = find_averages(data)
 sds = find_sds(data)
-make_graph(avgs, sds)
+make_graph(avgs, sds, path, name)
