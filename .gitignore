@@ -1,5 +1,8 @@
 .idea/
+.idea/vcs.xml
+sca-gaps.iml
 code/__pycache__/
 code/__pycache__/calculate_results.cpython-36.pyc
 code/__pycache__/simulations.cpython-36.pyc
 code/graphs/__pycache__/
+code/lib/__pycache__/ca_data.cpython-36.pyc

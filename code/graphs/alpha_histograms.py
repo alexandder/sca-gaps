@@ -9,18 +9,22 @@ def make_histograms_grouped_by_neighborhoods(data, path):
     axarr[0, 0].hist(data["0.1"], bins=200)
     axarr[0, 0].set_title("0.1")
     axarr[0, 0].set_xlim(0, xlim)
+    axarr[0, 0].set_ylim(0, 1400)
 
     axarr[0, 1].hist(data["0.2"], bins=200)
     axarr[0, 1].set_title("0.2")
     axarr[0, 1].set_xlim(0, xlim)
+    axarr[0, 1].set_ylim(0, 1400)
 
     axarr[1, 0].hist(data["0.3"], bins=200)
     axarr[1, 0].set_title("0.3")
     axarr[1, 0].set_xlim(0, xlim)
+    axarr[1, 0].set_ylim(0, 1400)
 
     axarr[1, 1].hist(data["0.4"], bins=200)
     axarr[1, 1].set_title("0.4")
     axarr[1, 1].set_xlim(0, xlim)
+    axarr[1, 1].set_ylim(0, 1400)
 
 
     f.set_size_inches(18.5, 10.5)
