@@ -3,12 +3,13 @@ import matplotlib.pyplot as plt
 import graphs.logs_reader as logs_reader
 
 
-def make_histogram_for_all(data):
+def make_histogram_for_all(data, path):
     plt.hist(data, bins=200)
     plt.xlabel('Success rate')
     plt.ylabel('Number')
     plt.title('Success rate histogram for all')
-    plt.savefig('../../graphs/histogram_all.pdf')
+    plt.savefig(path + 'histogram_all.pdf')
+    plt.close()
 
 def make_histograms_grouped_by_neighborhoods(data, path):
     f, axarr = plt.subplots(2, 4)
@@ -50,11 +51,13 @@ def make_histograms_grouped_by_neighborhoods(data, path):
     f.savefig(path + 'histogram_neighborhoods.pdf')
     plt.close(f)
 
-path = '../../graphs/'
 
-# all_success_rates = logs_reader.read_all_success_rates()
-# make_histogram_for_all(all_success_rates, path)
+def make_graphs():
+    for lmb in ['0.05/', '0.15/']:
+        path = '../../graphs/' + lmb
 
+        all_success_rates = logs_reader.read_all_success_rates(lmb)
+        make_histogram_for_all(all_success_rates, path)
 
-success_rates_grouped = logs_reader.read_success_rates_grouped_by_inconsistent_neighborhoods()
-make_histograms_grouped_by_neighborhoods(success_rates_grouped, path)
+        success_rates_grouped = logs_reader.read_success_rates_grouped_by_inconsistent_neighborhoods(lmb)
+        make_histograms_grouped_by_neighborhoods(success_rates_grouped, path)

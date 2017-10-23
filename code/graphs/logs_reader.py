@@ -1,24 +1,24 @@
 import os
 
-def read_success_rate_for_rule(rule):
+def read_success_rate_for_rule(rule, path):
     result = []
-    f = open('../../logs/' + str(rule) + '.out', 'r')
+    f = open('../../logs/' + path + str(rule) + '.out', 'r')
     for line in f:
         if line[0] != 'a':
             data = line.split(" ")
             result.append(float(data[7].replace(',', '')))
     return result
 
-def read_all_success_rates():
+def read_all_success_rates(path):
     result = []
     for r in range(256):
-        result.append(read_success_rate_for_rule(r))
+        result.append(read_success_rate_for_rule(r, path))
     return [rule for sublist in result for rule in sublist]
 
-def read_success_rates_for_number_of_inconsistnet_neighborhoods(number):
+def read_success_rates_for_number_of_inconsistent_neighborhoods(number, path):
     result = []
     for r in range(256):
-        f = open('../../logs/' + str(r) + '.out', 'r')
+        f = open('../../logs/' + path + str(r) + '.out', 'r')
         for line in f:
             if line[0] != 'a':
                 data = line.split(" ")
@@ -37,16 +37,16 @@ def number_of_inconsistent_neighborhoods(rule1, rule2):
             result += 1
     return result
 
-def read_success_rates_grouped_by_inconsistent_neighborhoods():
+def read_success_rates_grouped_by_inconsistent_neighborhoods(path):
     result = {'1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': []}
     for i in range(1, 9):
-        result[str(i)] = read_success_rates_for_number_of_inconsistnet_neighborhoods(i)
+        result[str(i)] = read_success_rates_for_number_of_inconsistent_neighborhoods(i, path)
     return result
 
-def read_success_rates_for_rules():
+def read_success_rates_for_rules(path):
     result = {}
     for r in range(256):
-        f = open('../../logs/' + str(r) + '.out', 'r')
+        f = open('../../logs/' + path + str(r) + '.out', 'r')
         for line in f:
             if line[0] != 'a':
                 data = line.split(" ")
@@ -56,10 +56,10 @@ def read_success_rates_for_rules():
                 result.setdefault(r2, []).append(sr)
     return result
 
-def read_success_rates_for_alpha(alpha):
+def read_success_rates_for_alpha(alpha, path):
     result = []
     for r in range(256):
-        f = open('../../logs/' + str(r) + '.out', 'r')
+        f = open('../../logs/' + path + str(r) + '.out', 'r')
         for line in f:
             if line[0] != 'a':
                 data = line.split(" ")
@@ -67,16 +67,16 @@ def read_success_rates_for_alpha(alpha):
                     result.append(float(data[7].replace(',', '')))
     return result
 
-def read_success_rates_for_alphas(alphas):
+def read_success_rates_for_alphas(alphas, path):
     result = {}
     for alpha in alphas:
-        result[str(alpha)] = read_success_rates_for_alpha(alpha)
+        result[str(alpha)] = read_success_rates_for_alpha(alpha, path)
     return result
 
-def read_success_rates_for_nondeterministic_gaps():
+def read_success_rates_for_nondeterministic_gaps(path):
     result = []
     for r in range(256):
-        f = open('../../logs/' + str(r) + '.out', 'r')
+        f = open('../../logs/' + path + str(r) + '.out', 'r')
         for line in f:
             if line[0] != 'a':
                 data = line.split(" ")
@@ -86,16 +86,16 @@ def read_success_rates_for_nondeterministic_gaps():
                 result.append((total_success - total_deterministic_gaps)/total_nondeterministic_gaps)
     return result
 
-def read_success_rates_for_nondeterministic_gaps_grouped_by_inconsistent_neighborhoods():
+def read_success_rates_for_nondeterministic_gaps_grouped_by_inconsistent_neighborhoods(path):
     result = {'1': [], '2': [], '3': [], '4': [], '5': [], '6': [], '7': [], '8': []}
     for i in range(1, 9):
-        result[str(i)] = read_success_rates_for_nondeterministic_gaps_and_number_of_inconsistnet_neighborhoods(i)
+        result[str(i)] = read_success_rates_for_nondeterministic_gaps_and_number_of_inconsistnet_neighborhoods(i, path)
     return result
 
-def read_success_rates_for_nondeterministic_gaps_and_number_of_inconsistnet_neighborhoods(number):
+def read_success_rates_for_nondeterministic_gaps_and_number_of_inconsistnet_neighborhoods(number, path):
     result = []
     for r in range(256):
-        f = open('../../logs/' + str(r) + '.out', 'r')
+        f = open('../../logs/' + path + str(r) + '.out', 'r')
         for line in f:
             if line[0] != 'a':
                 data = line.split(" ")
@@ -109,10 +109,10 @@ def read_success_rates_for_nondeterministic_gaps_and_number_of_inconsistnet_neig
     return result
 
 
-def read_success_rates_for_nondeterministic_gaps_and_rules():
+def read_success_rates_for_nondeterministic_gaps_and_rules(path):
     result = {}
     for r in range(256):
-        f = open('../../logs/' + str(r) + '.out', 'r')
+        f = open('../../logs/' + path + str(r) + '.out', 'r')
         for line in f:
             if line[0] != 'a':
                 data = line.split(" ")

@@ -31,12 +31,20 @@ def make_graph(averages, sds, path, name):
     plt.xlabel('average')
     plt.ylabel('standard deviation')
     plt.savefig(path + name)
+    plt.close()
 
-path = '../../graphs/'
-#name = 'avg_sd.pdf'
-name = 'nodeterministic_avg_sd.pdf'
-#data = logs_reader.read_success_rates_for_rules()
-data = logs_reader.read_success_rates_for_nondeterministic_gaps_and_rules()
-avgs = find_averages(data)
-sds = find_sds(data)
-make_graph(avgs, sds, path, name)
+def make_graphs():
+    for lmb in ['0.05/', '0.15/']:
+        path = '../../graphs/' + lmb
+
+        name = 'avg_sd.pdf'
+        data = logs_reader.read_success_rates_for_rules(lmb)
+        avgs = find_averages(data)
+        sds = find_sds(data)
+        make_graph(avgs, sds, path, name)
+
+        nond_name = 'nodeterministic_avg_sd.pdf'
+        nondeterministic_data = logs_reader.read_success_rates_for_nondeterministic_gaps_and_rules(lmb)
+        nond_avgs = find_averages(nondeterministic_data)
+        nond_sds = find_sds(nondeterministic_data)
+        make_graph(nond_avgs, nond_sds, path, nond_name)

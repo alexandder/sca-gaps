@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 import graphs.logs_reader as logs_reader
 
-def make_histograms_grouped_by_neighborhoods(data):
+def make_histograms_grouped_by_neighborhoods(data, path):
     f, axarr = plt.subplots(2, 2)
     xlim = 1
 
@@ -24,9 +24,12 @@ def make_histograms_grouped_by_neighborhoods(data):
 
 
     f.set_size_inches(18.5, 10.5)
-    f.savefig('../../graphs/histogram_alpha.pdf')
+    f.savefig(path + 'histogram_alpha.pdf')
     plt.close(f)
 
-alphas = [0.1, 0.2, 0.3, 0.4]
-data = logs_reader.read_success_rates_for_alphas(alphas)
-make_histograms_grouped_by_neighborhoods(data)
+def make_graphs():
+    for lmb in ['0.05/', '0.15/']:
+        path = '../../graphs/' + lmb
+        alphas = [0.1, 0.2, 0.3, 0.4]
+        data = logs_reader.read_success_rates_for_alphas(alphas, lmb)
+        make_histograms_grouped_by_neighborhoods(data, path)
