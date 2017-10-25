@@ -124,3 +124,13 @@ def read_success_rates_for_nondeterministic_gaps_and_rules(path):
                 result.setdefault(r, []).append(sr)
                 result.setdefault(r2, []).append(sr)
     return result
+
+def read_number_of_nondeterministic_gaps(path):
+    result = []
+    for r in range(256):
+        f = open('../../logs/' + path + str(r) + '.out', 'r')
+        for line in f:
+            if line[0] != 'a':
+                data = line.split(" ")
+                result.append(float(data[12].replace(',', '')))
+    return result
