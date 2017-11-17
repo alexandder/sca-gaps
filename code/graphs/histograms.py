@@ -51,6 +51,14 @@ def make_histograms_grouped_by_neighborhoods(data, path):
     f.savefig(path + 'histogram_neighborhoods.pdf')
     plt.close(f)
 
+def make_histogram_number_of_nondeterministic_gaps(data, path):
+    plt.hist(data, bins=200)
+    plt.xlabel('Nondeterministic gaps')
+    plt.ylabel('Number')
+    plt.title('Number of nondeterministic gaps')
+    plt.savefig(path + 'histogram_number_nondeterministic_gaps.pdf')
+    plt.close()
+
 
 def make_graphs():
     for lmb in ['0.05/', '0.15/']:
@@ -61,3 +69,6 @@ def make_graphs():
 
         success_rates_grouped = logs_reader.read_success_rates_grouped_by_inconsistent_neighborhoods(lmb)
         make_histograms_grouped_by_neighborhoods(success_rates_grouped, path)
+
+        number_nondeterministic_gaps = logs_reader.read_number_of_nondeterministic_gaps(lmb)
+        make_histogram_number_of_nondeterministic_gaps(number_nondeterministic_gaps, path)
