@@ -1,7 +1,7 @@
 import random
 import sys
 
-import lib.ca_data as ca_data
+import ca_data as ca_data
 
 
 def apply_rule(number, l, c, r):

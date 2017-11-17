@@ -1,30 +1,65 @@
 import binomial_distribution as bin
 import simulations as simulations
 import fill_gaps as gaps
-import lib.ca_data as ca_data
+import ca_data as ca_data
 
-def get_intervals_for_simulations(rule1, rule2, alpha):
-    result = []
+
+def find_probabilistic_lookup_table(rule1, rule2, estimated_alpha):
+    result = {"111": 0, "110": 0, "101": 0, "100": 0, "011": 0, "010": 0, "001": 0, "000": 0}
+    binary_rule1 = format(rule1, "#010b")[2:]
+    binary_rule2 = format(rule2, "#010b")[2:]
+    for i in range(len(binary_rule1)):
+        if binary_rule1[i] == str(0) and binary_rule2[i] == str(0):
+            result[ca_data.elementary_neighborhoods[7 - i]] = 0
+        elif binary_rule1[i] == str(1) and binary_rule2[i] == str(1):
+            result[ca_data.elementary_neighborhoods[7 - i]] = 1
+        elif binary_rule1[i] == str(1) and binary_rule2[i] == str(0):
+            result[ca_data.elementary_neighborhoods[7 - i]] = estimated_alpha
+        else:
+            result[ca_data.elementary_neighborhoods[7 - i]] = 1 - estimated_alpha
+    return result
+
+
+def fill_simulations(rule1, rule2, estimated_alpha, all_simulations, all_simulations_with_gaps):
+    estimated_P = find_probabilistic_lookup_table(rule1, rule2, estimated_alpha)
+    filled_simulations, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly = gaps.fill_gaps_for_all_simulations(rule1, rule2, all_simulations_with_gaps, estimated_P, estimated_alpha)
+    number_of_gaps = get_total_number_of_gaps(all_simulations_with_gaps)
+    number_of_failures = get_number_of_failures(all_simulations, filled_simulations)
+    return number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly
+
+
+def get_intervals_for_simulations(rule1, rule2, alpha, number_of_repetitions):
+    intervals = []
     rules_matched = 'MATCH'
     success_rates = []
-    for i in range(10):
-        total_num, all_simulations, all_simulations_with_gaps = simulations.perform_simulations(5, rule1, rule2, alpha, 49, 49, 0.05)
-        P = simulations.find_probabilities(total_num)
-        filled_simulations = gaps.fill_gaps_for_all_simulations(all_simulations_with_gaps, P)
-        total_number_of_gaps = get_total_number_of_gaps(all_simulations_with_gaps)
-        total_number_of_failures = get_number_of_failures(all_simulations, filled_simulations)
-        if total_number_of_gaps == 0:
-            success_rates.append(1.0)
-        else:
-            success_rate = 1 - (total_number_of_failures/total_number_of_gaps*1.0)
-            success_rates.append(success_rate)
+    total_gaps_filled_from_top = 0
+    total_gaps_filled_from_bottom = 0
+    total_gaps_filled_randomly = 0
+    total_gaps = 0
+    total_number_of_failures = 0
+    for i in range(number_of_repetitions):
+        number_of_neighborhoods_dict, all_simulations, all_simulations_with_gaps = simulations.perform_simulations(rule1, rule2, alpha, 49, 49, 0.05)
+        P = simulations.find_probabilities(number_of_neighborhoods_dict)
         match = estimate_rules(P, rule1, rule2)
-        alpha_L, alpha_U = calculate_confidence_interval(P, total_num)
+        alpha_L, alpha_U = calculate_confidence_interval(P, number_of_neighborhoods_dict)
         interval = {'alpha_L': alpha_L, 'alpha_U': alpha_U}
-        result.append(interval)
+        intervals.append(interval)
         if match == 'NO_MATCH':
             rules_matched = match
-    return result, rules_matched, success_rates
+        estimated_alpha = (alpha_L + alpha_U)/2
+        number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly = fill_simulations(rule1, rule2, estimated_alpha, all_simulations, all_simulations_with_gaps)
+        total_gaps += number_of_gaps
+        total_gaps_filled_from_top += gaps_filled_from_top
+        total_gaps_filled_from_bottom += gaps_filled_from_bottom
+        total_gaps_filled_randomly += gaps_filled_randomly
+        total_number_of_failures += number_of_failures
+        if number_of_gaps == 0:
+            success_rates.append(1.0)
+        else:
+            success_rate = 1 - (number_of_failures / number_of_gaps * 1.0)
+            success_rates.append(success_rate)
+    return intervals, rules_matched, success_rates, total_gaps, total_number_of_failures,\
+           total_gaps_filled_from_top, total_gaps_filled_from_bottom, total_gaps_filled_randomly
 
 def calculate_confidence_interval(P, total_number_of_neighborhoods):
     nei_for_p_less_than_half = []

@@ -2,8 +2,8 @@ from copy import deepcopy
 
 import initial_configurations
 import introduce_gaps as gaps
-import lib.ca_data as ca_data
-import lib.sca_lib as sca_lib
+import ca_data as ca_data
+import sca_lib as sca_lib
 
 
 def perform_simulation_and_introduce_gaps_for_rules(I, rule1, rule2, alpha, N, T, gap_probability, all_simulations, all_simulations_with_gaps):
@@ -22,7 +22,7 @@ def merge_number_of_neighborhoods(result, simulated):
     return result
 
 
-def perform_simulations(K, rule1, rule2, alpha, N, T, gap_probability):
+def perform_simulations(rule1, rule2, alpha, N, T, gap_probability):
     total_number_of_neighborhoods = {"111": {'0': 0, '1': 0}, "110": {'0': 0, '1': 0}, "101": {'0': 0, '1': 0},
                                      "100": {'0': 0, '1': 0},
                                      "011": {'0': 0, '1': 0}, "001": {'0': 0, '1': 0}, "010": {'0': 0, '1': 0},

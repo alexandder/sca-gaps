@@ -1,6 +1,6 @@
 import random
 
-import lib.ca_lib as ca_lib
+import ca_lib as ca_lib
 
 
 def apply_stochastic_rule(rule1, rule2, l, c, r, alpha):
