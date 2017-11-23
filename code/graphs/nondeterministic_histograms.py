@@ -61,7 +61,7 @@ def make_histograms_grouped_by_neighborhoods(data, path):
     plt.close(f)
 
 def make_graphs():
-    for lmb in ['0.05/', '0.15/']:
+    for lmb in ['0.05/']:
         path = '../../graphs/' + lmb
 
         all_success_rates = logs_reader.read_success_rates_for_nondeterministic_gaps(lmb)

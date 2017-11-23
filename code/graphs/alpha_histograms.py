@@ -32,7 +32,7 @@ def make_histograms_grouped_by_neighborhoods(data, path):
     plt.close(f)
 
 def make_graphs():
-    for lmb in ['0.05/', '0.15/']:
+    for lmb in ['0.05/']:
         path = '../../graphs/' + lmb
         alphas = [0.1, 0.2, 0.3, 0.4]
         data = logs_reader.read_success_rates_for_alphas(alphas, lmb)

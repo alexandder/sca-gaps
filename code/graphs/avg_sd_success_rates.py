@@ -34,7 +34,7 @@ def make_graph(averages, sds, path, name):
     plt.close()
 
 def make_graphs():
-    for lmb in ['0.05/', '0.15/']:
+    for lmb in ['0.05/']:
         path = '../../graphs/' + lmb
 
         name = 'avg_sd.pdf'

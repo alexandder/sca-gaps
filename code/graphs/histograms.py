@@ -61,7 +61,7 @@ def make_histogram_number_of_nondeterministic_gaps(data, path):
 
 
 def make_graphs():
-    for lmb in ['0.05/', '0.15/']:
+    for lmb in ['0.05/']:
         path = '../../graphs/' + lmb
 
         all_success_rates = logs_reader.read_all_success_rates(lmb)

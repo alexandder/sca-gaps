@@ -80,10 +80,7 @@ def read_success_rates_for_nondeterministic_gaps(path):
         for line in f:
             if line[0] != 'a':
                 data = line.split(" ")
-                total_success = float(data[7].replace(',', '')) * float(data[9].replace(',', ''))
-                total_nondeterministic_gaps = float(data[12].replace(',', ''))
-                total_deterministic_gaps = float(data[10].replace(',', ''))
-                result.append((total_success - total_deterministic_gaps)/total_nondeterministic_gaps)
+                result.append(float(data[12].replace(',', '')))
     return result
 
 def read_success_rates_for_nondeterministic_gaps_grouped_by_inconsistent_neighborhoods(path):
@@ -102,10 +99,7 @@ def read_success_rates_for_nondeterministic_gaps_and_number_of_inconsistnet_neig
                 r1 = int(data[1].replace(',', ''))
                 r2 = int(data[2].replace(',', ''))
                 if number_of_inconsistent_neighborhoods(r1, r2) == number:
-                    total_success = float(data[7].replace(',', '')) * float(data[9].replace(',', ''))
-                    total_nondeterministic_gaps = float(data[12].replace(',', ''))
-                    total_deterministic_gaps = float(data[10].replace(',', ''))
-                    result.append((total_success - total_deterministic_gaps) / total_nondeterministic_gaps)
+                    result.append(float(data[12].replace(',', '')))
     return result
 
 
@@ -117,10 +111,7 @@ def read_success_rates_for_nondeterministic_gaps_and_rules(path):
             if line[0] != 'a':
                 data = line.split(" ")
                 r2 = int(data[2].replace(',', ''))
-                total_success = float(data[7].replace(',', '')) * float(data[9].replace(',', ''))
-                total_nondeterministic_gaps = float(data[12].replace(',', ''))
-                total_deterministic_gaps = float(data[10].replace(',', ''))
-                sr = (total_success - total_deterministic_gaps) / total_nondeterministic_gaps
+                sr = float(data[12].replace(',', ''))
                 result.setdefault(r, []).append(sr)
                 result.setdefault(r2, []).append(sr)
     return result
@@ -132,6 +123,6 @@ def read_number_of_nondeterministic_gaps(path):
         for line in f:
             if line[0] != 'a':
                 data = line.split(" ")
-                result.append(float(data[12].replace(',', '')))
+                result.append(float(data[11].replace(',', '')))
     return result
 
