@@ -7,7 +7,7 @@ from calculate_results import find_wrong_estimation_ratio, get_intervals_for_sim
 def estimate_all_rules(rule, alphas):
     print("alpha, r1, r2, max_err, wrong_ration, max_dist, match, filling success rate, "
           "n_gaps, n_failures, n_top_gaps, n_bottom_gaps, success_rate_bottom, n_gaps_random, % random gaps")
-    for r1 in [int(rule), int(rule) + 1]:
+    for r1 in [int(rule)]:
         for r2 in range(0, 256):
             if r1 != r2:
                 for a in alphas:
