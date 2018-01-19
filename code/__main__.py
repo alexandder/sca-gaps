@@ -9,13 +9,8 @@ def estimate_all_rules(rule, alphas):
     for r1 in [int(rule)]:
         for r2 in range(0, 256):
             if r1 != r2:
-                f = open("logs99/" + str(r2) + ".out", 'w')
-                f.write(
-                    "alpha, r1, r2, filling success rate, n_gaps, n_failures, n_top_gaps, n_bottom_gaps, success_rate_bottom, n_gaps_random, % random gaps")
-                f.write("\n")
                 for a in alphas:
-                    get_intervals_for_simulations(f, r1, r2, a, 15)
-                f.close()
+                    get_intervals_for_simulations(r1, r2, a, 25)
 
 
 

@@ -1,3 +1,4 @@
+import sys
 import binomial_distribution as bin
 import simulations as simulations
 import fill_gaps as gaps
@@ -28,7 +29,7 @@ def fill_simulations(rule1, rule2, estimated_alpha, all_simulations, all_simulat
     return number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly
 
 
-def get_intervals_for_simulations(f, rule1, rule2, alpha, number_of_repetitions):
+def get_intervals_for_simulations(rule1, rule2, alpha, number_of_repetitions):
     intervals = []
     rules_matched = 'MATCH'
     success_rates = []
@@ -48,13 +49,12 @@ def get_intervals_for_simulations(f, rule1, rule2, alpha, number_of_repetitions)
             rules_matched = match
         estimated_alpha = (alpha_L + alpha_U)/2
         number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly = fill_simulations(rule1, rule2, estimated_alpha, all_simulations, all_simulations_with_gaps)
-        print_results_for_repetition(f, rule1, rule2, alpha, number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly)
-    print(str(rule2) + " finished")
+        print_results_for_repetition(rule1, rule2, alpha, number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly)
 
     return intervals, rules_matched, success_rates, total_gaps, total_number_of_failures,\
            total_gaps_filled_from_top, total_gaps_filled_from_bottom, total_gaps_filled_randomly
 
-def print_results_for_repetition(f, r1, r2, alpha, number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly):
+def print_results_for_repetition(r1, r2, alpha, number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly):
     size = len(number_of_gaps)
     for i in range(size):
         success_rate = 1 - (1.0 * number_of_failures[i] / number_of_gaps[i])
@@ -63,11 +63,7 @@ def print_results_for_repetition(f, r1, r2, alpha, number_of_gaps, number_of_fai
         if gaps_filled_from_bottom[i] != 0:
             bottom_success_rate = 1 - (1.0 * number_of_failures[i] / gaps_filled_from_bottom[i])
             gaps_randomly_ratio = 1.0 * gaps_filled_randomly[i] / gaps_filled_from_bottom[i]
-        f.write(str(alpha) + ", " + str(r1) + ", " + str(r2) + ", " + str(success_rate)
-              + ", " + str(number_of_gaps[i]) + ", " + str(number_of_failures[i]) + ", " + str(gaps_filled_from_top[i])
-              + ", " + str(gaps_filled_from_bottom[i]) + ", " + str(bottom_success_rate) + ", " + str(gaps_filled_randomly[i]) + ", "
-              + str(gaps_randomly_ratio))
-        f.write("\n")
+        sys.stdout.write(str(success_rate) + ' ')
 
 def calculate_confidence_interval(P, total_number_of_neighborhoods):
     nei_for_p_less_than_half = []
