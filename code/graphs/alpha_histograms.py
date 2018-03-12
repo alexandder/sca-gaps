@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import graphs.logs_reader as logs_reader
+import logs_reader as logs_reader
 import matplotlib.ticker as mtick
 from matplotlib.ticker import FuncFormatter
 
@@ -37,10 +37,10 @@ def make_histograms_grouped_by_neighborhoods(data, path):
 def make_graph(data, lmb):
     scaled = [x for x in data]
     weights = np.ones_like(scaled) / float(len(scaled))
-    plt.hist(scaled, weights=weights)
+    plt.hist(data, weights=weights, bins=50, range=(0.5,1))
     plt.xlabel('Success rate')
     plt.ylabel('Fraction')
-    plt.ylim(0, 0.6)
+    plt.ylim(0, 0.5)
     plt.xlim(0.5, 1.0)
     plt.gca().xaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.0%}'.format(y)))
     plt.savefig('../../graphs/0.05/histogram_' + str(lmb) + '.pdf')
