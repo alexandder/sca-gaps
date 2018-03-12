@@ -1,13 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
-import graphs.logs_reader as logs_reader
+import logs_reader as logs_reader
 
 
 def make_histogram_for_all(data, path):
-    plt.hist(data, bins=200)
+    plt.hist(data, bins=100, range=(0.5,1))
     plt.xlabel('Success rate')
     plt.ylabel('Number')
+    plt.xlim(0.5,1.0)
     plt.gca().xaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.0%}'.format(y)))
     plt.savefig(path + 'histogram_all.pdf')
     plt.close()
@@ -61,9 +62,9 @@ def make_histogram_number_of_nondeterministic_gaps(data, path):
 
 def make_histogram_for_nei(data, path, nei):
     weights = np.ones_like(data) / float(len(data))
-    plt.hist(data, weights=weights)
+    plt.hist(data, weights=weights, range=(0.5,1), bins=50)
     plt.xlabel('Success rate')
-    plt.ylabel('Number')
+    plt.ylabel('Fraction')
     plt.xlim(0.5, 1.0)
     plt.ylim(0, 1.0)
     plt.gca().xaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.0%}'.format(y)))
@@ -83,11 +84,11 @@ def make_graphs():
         number_nondeterministic_gaps = logs_reader.read_number_of_nondeterministic_gaps(lmb)
         make_histogram_number_of_nondeterministic_gaps(number_nondeterministic_gaps, path)
 
-# for i in range(1, 9):
-#     success_rates_grouped = logs_reader.read_success_rates_grouped_by_inconsistent_neighborhoods('0.05/')
-#     make_histogram_for_nei(success_rates_grouped[str(i)], '../../graphs/0.05/', i)
+for i in range(1, 9):
+    success_rates_grouped = logs_reader.read_success_rates_grouped_by_inconsistent_neighborhoods('0.05/')
+    make_histogram_for_nei(success_rates_grouped[str(i)], '../../graphs/0.05/', i)
 
-path = '../../graphs/' + '0.05/'
+# path = '../../graphs/' + '0.05/'
 
-all_success_rates = logs_reader.read_all_success_rates('0.05/')
-make_histogram_for_all(all_success_rates, path)
+# all_success_rates = logs_reader.read_all_success_rates('0.05/')
+# make_histogram_for_all(all_success_rates, path)
