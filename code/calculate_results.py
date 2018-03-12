@@ -1,3 +1,4 @@
+import sys
 import binomial_distribution as bin
 import simulations as simulations
 import fill_gaps as gaps
@@ -48,18 +49,21 @@ def get_intervals_for_simulations(rule1, rule2, alpha, number_of_repetitions):
             rules_matched = match
         estimated_alpha = (alpha_L + alpha_U)/2
         number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly = fill_simulations(rule1, rule2, estimated_alpha, all_simulations, all_simulations_with_gaps)
-        total_gaps += number_of_gaps
-        total_gaps_filled_from_top += gaps_filled_from_top
-        total_gaps_filled_from_bottom += gaps_filled_from_bottom
-        total_gaps_filled_randomly += gaps_filled_randomly
-        total_number_of_failures += number_of_failures
-        if number_of_gaps == 0:
-            success_rates.append(1.0)
-        else:
-            success_rate = 1 - (number_of_failures / number_of_gaps * 1.0)
-            success_rates.append(success_rate)
+        print_results_for_repetition(rule1, rule2, alpha, number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly)
+
     return intervals, rules_matched, success_rates, total_gaps, total_number_of_failures,\
            total_gaps_filled_from_top, total_gaps_filled_from_bottom, total_gaps_filled_randomly
+
+def print_results_for_repetition(r1, r2, alpha, number_of_gaps, number_of_failures, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly):
+    size = len(number_of_gaps)
+    for i in range(size):
+        success_rate = 1 - (1.0 * number_of_failures[i] / number_of_gaps[i])
+        bottom_success_rate = 1
+        gaps_randomly_ratio = 1
+        if gaps_filled_from_bottom[i] != 0:
+            bottom_success_rate = 1 - (1.0 * number_of_failures[i] / gaps_filled_from_bottom[i])
+            gaps_randomly_ratio = 1.0 * gaps_filled_randomly[i] / gaps_filled_from_bottom[i]
+        sys.stdout.write(str(success_rate) + ' ')
 
 def calculate_confidence_interval(P, total_number_of_neighborhoods):
     nei_for_p_less_than_half = []
@@ -90,21 +94,25 @@ def calculate_confidence_interval(P, total_number_of_neighborhoods):
     return 0, 0
 
 def get_number_of_failures(all_simulations, all_filled_simulations):
-    total_number_of_failures = 0
+    total_number_of_failures = []
     for i in range(len(all_simulations)):
+        number_of_failures_in_simulation = 0
         for j in range(len(all_simulations[i])):
             for k in range(len(all_simulations[i][j])):
                 if all_filled_simulations[i][j][k] != all_simulations[i][j][k]:
-                    total_number_of_failures += 1
+                    number_of_failures_in_simulation += 1
+        total_number_of_failures.append(number_of_failures_in_simulation)
     return total_number_of_failures
 
 def get_total_number_of_gaps(all_simulations_with_gaps):
-    total_number_of_gaps = 0
+    total_number_of_gaps = []
     for i in range(len(all_simulations_with_gaps)):
+        number_of_gaps_in_simulation = 0
         for j in range(len(all_simulations_with_gaps[i])):
             for k in range(len(all_simulations_with_gaps[i][j])):
                 if all_simulations_with_gaps[i][j][k] == -1:
-                    total_number_of_gaps += 1
+                    number_of_gaps_in_simulation += 1
+        total_number_of_gaps.append(number_of_gaps_in_simulation)
     return total_number_of_gaps
 
 def find_max_error(intervals, alpha):

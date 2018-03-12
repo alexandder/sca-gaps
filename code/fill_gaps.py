@@ -6,15 +6,15 @@ import ca_lib as ca_lib
 
 def fill_gaps_for_all_simulations(r1, r2, all_simulations, P, estimated_alpha):
     filled_simulations = []
-    gaps_filled_from_top = 0
-    gaps_filled_from_bottom = 0
-    gaps_filled_randomly = 0
+    gaps_filled_from_top = []
+    gaps_filled_from_bottom = []
+    gaps_filled_randomly = []
     for sim in all_simulations:
         copy = deepcopy(sim)
-        gaps_filled_from_top += fill_gaps_from_top(copy, P)
+        gaps_filled_from_top.append(fill_gaps_from_top(copy, P))
         gaps_bottom, gaps_randomly = fill_gaps_from_bottom(r1, r2, copy, P, estimated_alpha)
-        gaps_filled_from_bottom += gaps_bottom
-        gaps_filled_randomly += gaps_randomly
+        gaps_filled_from_bottom.append(gaps_bottom)
+        gaps_filled_randomly.append(gaps_randomly)
         filled_simulations.append(copy)
     return filled_simulations, gaps_filled_from_top, gaps_filled_from_bottom, gaps_filled_randomly
 

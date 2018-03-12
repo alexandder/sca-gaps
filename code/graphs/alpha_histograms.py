@@ -1,6 +1,9 @@
+import numpy as np
 import matplotlib.pyplot as plt
-
 import graphs.logs_reader as logs_reader
+import matplotlib.ticker as mtick
+from matplotlib.ticker import FuncFormatter
+
 
 def make_histograms_grouped_by_neighborhoods(data, path):
     f, axarr = plt.subplots(2, 2)
@@ -31,10 +34,26 @@ def make_histograms_grouped_by_neighborhoods(data, path):
     f.savefig(path + 'histogram_alpha.pdf')
     plt.close(f)
 
+def make_graph(data, lmb):
+    scaled = [x for x in data]
+    weights = np.ones_like(scaled) / float(len(scaled))
+    plt.hist(scaled, weights=weights)
+    plt.xlabel('Success rate')
+    plt.ylabel('Fraction')
+    plt.ylim(0, 0.6)
+    plt.xlim(0.5, 1.0)
+    plt.gca().xaxis.set_major_formatter(FuncFormatter(lambda y, _: '{:.0%}'.format(y)))
+    plt.savefig('../../graphs/0.05/histogram_' + str(lmb) + '.pdf')
+    plt.close()
+
 def make_graphs():
     for lmb in ['0.05/']:
-        path = '../../graphs/' + lmb
         alphas = [0.1, 0.2, 0.3, 0.4]
         data = logs_reader.read_success_rates_for_alphas(alphas, lmb)
-        make_histograms_grouped_by_neighborhoods(data, path)
+        make_graph(data['0.1'], 0.1)
+        make_graph(data['0.2'], 0.2)
+        make_graph(data['0.3'], 0.3)
+        make_graph(data['0.4'], 0.4)
+
+make_graphs()
 
