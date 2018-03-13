@@ -3,12 +3,11 @@ import numpy as np
 import random
 import sys
 from collections import Counter
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 # import matplotlib.pyplot as plt
 # import lib.ca_lib as ca_lib
 # import lib.sca_lib as sca_lib
-import initial_configurations as initial_configurations
 
 
 def generate_simulation(N):
@@ -42,10 +41,6 @@ def access_cell(simulation, i, j):
     if j >= row_length:
         j = j - row_length
     return simulation[i][j]
-
-def is_in_cluster(simulation, row_current, column_current, row_neighbor, column_neighbor):
-    return access_cell()
-
 
 def offset_column(column, row_length):
     if column >= row_length:
@@ -83,13 +78,13 @@ def count_clusters(simulation):
     return result
 
 def find_max_cluster_size(counted_clusters, N):
-    return 1.0*np.average(list(counted_clusters.values()))
+    return 1.0*np.max(list(counted_clusters.values()))
 
 def find_number_of_clusters(counted_clusters):
     return len(counted_clusters.keys())
 
 def perform_simulation_of_maximal_cluster_size():
-    probabilities = [0.005] + [1.0 * x / 80 for x in range(1, 20)]
+    probabilities = [x/400.0 for x in range(2,100)]
     N = 49
     result = {}
     for p in probabilities:
@@ -97,13 +92,14 @@ def perform_simulation_of_maximal_cluster_size():
         for i in range(250):
             grouped_simulation = make_clusters(make_clusters(introduce_gaps(generate_simulation(N), p)))
             counted_clusters = count_clusters(grouped_simulation)
-            maximal.append(find_max_cluster_size(counted_clusters, N))
-        result[p] = 1.0*sum(maximal) / len(maximal)
-    print(result)
+            a=np.array(list(counted_clusters.values()))
+            if(len(counted_clusters) > 0):
+                maximal.append(np.histogram(a, density=True, bins=range(a.min(),2+a.max()))[0][0])
+        print(p, min(maximal), np.average(maximal), max(maximal), np.std(maximal))
     return result
 
 def perform_simulation_of_number_of_clusters():
-    probabilities = [0.005] + [1.0 * x / 20 for x in range(1, 20)]
+    probabilities = [x/200.0 for x in range(1,50)]
     N = 49
     result = {}
     for p in probabilities:
@@ -111,31 +107,30 @@ def perform_simulation_of_number_of_clusters():
         for i in range(250):
             grouped_simulation = make_clusters(make_clusters(introduce_gaps(generate_simulation(N), p)))
             counted_clusters = count_clusters(grouped_simulation)
-            number.append(find_number_of_clusters(counted_clusters))
-        result[p] = 1.0*sum(number)/len(number)
+            number.append(1.0*find_number_of_clusters(counted_clusters))
+        print(p, min(number), np.average(number), max(number), np.std(number))
     return result
 
-
-
+    
 def make_plot_cluster_size_probability(data, path):
     plt.plot(list(data.keys()), list(data.values()))
-    plt.xlabel('probability')
-    plt.ylabel('maximal cluster size as % of all cells')
+    plt.xlabel('gap introduction probability')
+    plt.ylabel('averaged maximal cluster size')
     plt.savefig(path + 'cluster_size.pdf')
     plt.close()
 
 def make_plot_for_number_of_clusters(data, path):
     plt.plot(list(data.keys()), list(data.values()))
-    plt.xlabel('probability')
+    plt.xlabel('gap introduction probability')
     plt.ylabel('number of clusters')
     plt.savefig(path + 'cluster_number.pdf')
     plt.close()
 
 #make_plot_cluster_size_probability(perform_simulation_of_maximal_cluster_size(), '')
-make_plot_for_number_of_clusters(perform_simulation_of_number_of_clusters(), '')
+#make_plot_for_number_of_clusters(perform_simulation_of_number_of_clusters(), '')
 
-
-
+# to draw a plot use cluster-size.gnuplot script
+perform_simulation_of_maximal_cluster_size()
 
 
 
