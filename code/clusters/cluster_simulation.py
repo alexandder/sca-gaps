@@ -93,8 +93,11 @@ def perform_simulation_of_maximal_cluster_size():
             grouped_simulation = make_clusters(make_clusters(introduce_gaps(generate_simulation(N), p)))
             counted_clusters = count_clusters(grouped_simulation)
             a=np.array(list(counted_clusters.values()))
+            unique, counts = np.unique(a, return_counts=True)
+            d = dict(zip(unique, counts))
+            number_of_gaps = sum([k * d[k] for k in d.keys()])
             if(len(counted_clusters) > 0):
-                maximal.append(np.histogram(a, density=True, bins=range(a.min(),2+a.max()))[0][0])
+                maximal.append(float(d[1])/number_of_gaps)
         print(p, min(maximal), np.average(maximal), max(maximal), np.std(maximal))
     return result
 
